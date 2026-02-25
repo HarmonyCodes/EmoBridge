@@ -9,4 +9,5 @@ class Emotion(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=True)
+    emoji: Mapped[str] = mapped_column(String(10), nullable=False)
+    images: Mapped[list["Image"]] = relationship("Image", back_populates="emotion")  # Comma-separated image URLs

@@ -4,12 +4,11 @@ from pydantic import BaseModel, ConfigDict
 
 class EmotionCreate(BaseModel):
     name: str
-    description: Optional[str] = None
-
+    emoji: str
 
 class EmotionRead(BaseModel):
     id: int
     name: str
-    description: Optional[str] = None
+    emoji: str
 
     model_config = ConfigDict(from_attributes=True)

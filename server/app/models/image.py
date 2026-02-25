@@ -9,7 +9,6 @@ class Image(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     url: Mapped[str] = mapped_column(String(1024), nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=True)
-    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    emotion_id: Mapped[int] = mapped_column(Integer, ForeignKey("emotions.id"), nullable=True)
 
-    owner = relationship("User", lazy="selectin")
+    emotion: Mapped["Emotion"] = relationship("Emotion", back_populates="images")

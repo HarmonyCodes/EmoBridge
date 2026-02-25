@@ -6,6 +6,7 @@ from datetime import datetime
 class UserCreate(BaseModel):
     username: str
     email: Optional[str] = None
+    password: str
 
 
 class UserRead(BaseModel):
@@ -17,16 +18,31 @@ class UserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ProgressCreate(BaseModel):
+class GameTrialCreate(BaseModel):
     session_id: int
-    emotion_id: int
-    score: int = 0
+    image_id: int
+    correct_emotion_id: int
+    selected_emotion_id: int
+    is_correct: bool = False
+    response_time_ms: Optional[int] = None
 
 
-class ProgressRead(BaseModel):
+class GameTrialRead(BaseModel):
     id: int
     session_id: int
-    emotion_id: int
+    image_id: int
+    correct_emotion_id: int
+    selected_emotion_id: int
+    is_correct: bool = False
+    score: int = 0
+    response_time_ms: Optional[int] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class GameTrialSummaryRead(BaseModel):
+    id: int
+    session_id: int
+    correct_emotion_id: int
     score: int
 
     model_config = ConfigDict(from_attributes=True)
