@@ -27,10 +27,6 @@ class LearningSession(Base):
     user = relationship("User", back_populates="sessions", lazy="selectin")
     progresses = relationship("GameTrial", back_populates="session", lazy="selectin")
 
-
-class GameTrial(Base):
-    __tablename__ = "game_trials"
-
 class GameTrial(Base):
     __tablename__ = "game_trials"
 
