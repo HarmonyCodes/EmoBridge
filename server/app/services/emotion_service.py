@@ -6,7 +6,7 @@ from app import models, schemas
 
 
 async def create_emotion(db: AsyncSession, emotion_in: schemas.EmotionCreate) -> models.Emotion:
-    emotion = models.Emotion(name=emotion_in.name, description=emotion_in.description)
+    emotion = models.Emotion(name=emotion_in.name, emoji=emotion_in.emoji)
     db.add(emotion)
     await db.commit()
     await db.refresh(emotion)
@@ -15,6 +15,15 @@ async def create_emotion(db: AsyncSession, emotion_in: schemas.EmotionCreate) ->
 
 async def get_emotion(db: AsyncSession, emotion_id: int) -> Optional[models.Emotion]:
     result = await db.execute(select(models.Emotion).where(models.Emotion.id == emotion_id))
+    return result.scalar_one_or_none()
+
+async def get_emotion_with_images(db: AsyncSession, emotion_id: int) -> Optional[models.Emotion]:
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(
+        select(models.Emotion)
+        .options(selectinload(models.Emotion.images)) 
+        .where(models.Emotion.id == emotion_id)
+    )
     return result.scalar_one_or_none()
 
 
