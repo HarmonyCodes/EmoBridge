@@ -2,8 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.user import UserCreate, UserRead, ProgressRead, ProgressCreate
-from app.services.user_service import create_user, list_users, get_user, update_user, delete_user
+from app import schemas, services
 from app.db import get_session
 
 router = APIRouter(prefix="/users", tags=["users"])
