@@ -1,1 +1,1 @@
-__all__ = ["user_router", "emotion_router"]
+__all__ = ["user_router", "emotion_router", "game_router"]
