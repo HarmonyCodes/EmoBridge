@@ -6,8 +6,7 @@ from app import models, schemas
 
 
 async def create_user(db: AsyncSession, user_in: schemas.UserCreate) -> models.User:
-    (hashed_password)
-    user = models.User(username=user_in.username, email=user_in.email, hashed_password=user_in.password)
+    user = models.User(username=user_in.username, email=user_in.email, hashed_password= user_in.password)
     db.add(user)
     await db.commit()
     await db.refresh(user)
