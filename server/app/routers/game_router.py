@@ -3,20 +3,21 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import schemas, services
+from app import schemas, services, models
 from app.db import get_session
+from app.core.dependencies import get_current_user
 
 router = APIRouter(prefix="/game", tags=["game"])
 
 
 @router.post("/start_session", response_model=schemas.LearningSessionRead, status_code=status.HTTP_201_CREATED)
-async def start_session(user_id: int, db: AsyncSession = Depends(get_session)):
-    session = await services.game_service.start_session(db, user_id)
+async def start_session(current_user: models.User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
+    session = await services.game_service.start_session(db, current_user.id)
     return session
 
 
 @router.get("/random_question", response_model=schemas.QuestionResponse)
-async def get_random_question(db: AsyncSession = Depends(get_session)):
+async def get_random_question(current_user: models.User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     try:
         return await services.game_service.get_random_question(db)
     except ValueError as exc:
@@ -25,7 +26,7 @@ async def get_random_question(db: AsyncSession = Depends(get_session)):
 
 
 @router.post("/submit_trial", response_model=schemas.GameTrialRead)
-async def submit_trial(trial_in: schemas.GameTrialCreate, db: AsyncSession = Depends(get_session)):
+async def submit_trial(trial_in: schemas.GameTrialCreate, current_user: models.User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     return await services.game_service.submit_trial(db, trial_in)
 
 
