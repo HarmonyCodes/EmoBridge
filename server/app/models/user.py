@@ -14,7 +14,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     hashed_password: Mapped[str] = mapped_column(String(200), nullable=False)
 
-    sessions = relationship("LearningSession", back_populates="user", lazy="selectin")
+    sessions = relationship("LearningSession", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
 
 class LearningSession(Base):
@@ -25,7 +25,7 @@ class LearningSession(Base):
     started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     ended_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     user = relationship("User", back_populates="sessions", lazy="selectin")
-    progresses = relationship("GameTrial", back_populates="session", lazy="selectin")
+    progresses = relationship("GameTrial", back_populates="session", lazy="selectin", cascade="all, delete-orphan")
 
 class GameTrial(Base):
     __tablename__ = "game_trials"

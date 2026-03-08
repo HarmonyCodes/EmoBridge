@@ -27,7 +27,7 @@ async def get_random_question(current_user: models.User = Depends(get_current_us
 
 @router.post("/submit_trial", response_model=schemas.GameTrialRead)
 async def submit_trial(trial_in: schemas.GameTrialCreate, current_user: models.User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
-    return await services.game_service.submit_trial(db, trial_in)
+    return await services.game_service.submit_trial(db, trial_in, current_user.id)
 
 
 @router.post("/end_session", response_model=schemas.LearningSessionRead)

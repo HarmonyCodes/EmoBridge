@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 import random
-
+from fastapi import HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app import models, schemas
 
 
@@ -40,30 +39,36 @@ async def get_random_question(db: AsyncSession) -> schemas.QuestionResponse:
     others = resp.scalars().all()
 
     options: List[models.Emotion] = [correct] + others
-    # shuffle to randomize order
     random.shuffle(options)
 
     return schemas.QuestionResponse(
-        image_id=image.id,
-        image_url=image.url,
-        options=options,
+        image_id = image.id,
+        image_url = image.url,
+        options = options,
     )
 
 
 async def submit_trial(
-    db: AsyncSession, trial_in: schemas.GameTrialCreate
-) -> models.GameTrial:
+    db: AsyncSession, trial_in: schemas.GameTrialCreate, current_user_id: int):
+    result = await db.execute(select(models.LearningSession).where(models.LearningSession.id == trial_in.session_id))
+    session = result.scalar_one_or_none()
+   
+    if not session or session.user_id != current_user_id:
+        raise HTTPException(status_code = 403, detail = "Invalid session ID or session does not belong to user")
+    
     is_correct = trial_in.selected_emotion_id == trial_in.correct_emotion_id
     score = 1 if is_correct else 0
+   
     trial = models.GameTrial(
-        session_id=trial_in.session_id,
-        image_id=trial_in.image_id,
-        correct_emotion_id=trial_in.correct_emotion_id,
-        selected_emotion_id=trial_in.selected_emotion_id,
-        is_correct=is_correct,
-        score=score,
-        response_time_ms=trial_in.response_time_ms,
+        session_id = trial_in.session_id,
+        image_id = trial_in.image_id,
+        correct_emotion_id = trial_in.correct_emotion_id,
+        selected_emotion_id = trial_in.selected_emotion_id,
+        is_correct = is_correct,
+        score = score,
+        response_time_ms = trial_in.response_time_ms,
     )
+   
     db.add(trial)
     await db.commit()
     await db.refresh(trial)
