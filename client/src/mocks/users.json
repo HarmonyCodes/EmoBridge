@@ -1,0 +1,17 @@
+[
+  {
+    "id": "a3f1c2d4-1234-4abc-9def-000011112222",
+    "username": "admin",
+    "password": "1234"
+  },
+  {
+    "id": "b7e2d3f5-5678-4bcd-aef0-333344445555",
+    "username": "therapist",
+    "password": "bridge"
+  },
+  {
+    "id": "c9a4e5g6-9012-4cde-bfg1-666677778888",
+    "username": "demo",
+    "password": "demo"
+  }
+]
