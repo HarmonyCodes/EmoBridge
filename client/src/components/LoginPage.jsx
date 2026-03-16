@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { User, Lock, LogIn, Eye, EyeOff, Sun, Moon } from 'lucide-react';
 
-const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
+const LoginPage = React.memo(({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const inputBase = "w-full py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-blue-50 dark:bg-slate-700 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400 transition-colors";
+
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     if (onLogin) onLogin({ username, password });
-  };
+  }, [onLogin, username, password]);
 
   return (
     <div
@@ -41,7 +43,7 @@ const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
 
             {/* Username */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-slate-600 dark:text-slate-300">
+              <label htmlFor="username" className="text-sm font-bold text-slate-600 dark:text-slate-300">
                 שם משתמש
               </label>
               <div className="relative">
@@ -50,19 +52,20 @@ const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
                   className="absolute top-1/2 right-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
                 />
                 <input
+                  id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="הכנס שם משתמש"
                   required
-                  className="w-full pr-11 pl-4 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-blue-50 dark:bg-slate-700 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400 dark:focus:border-blue-400 transition-colors"
+                  className={`${inputBase} pr-11 pl-4`}
                 />
               </div>
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-slate-600 dark:text-slate-300">
+              <label htmlFor="password" className="text-sm font-bold text-slate-600 dark:text-slate-300">
                 סיסמה
               </label>
               <div className="relative">
@@ -71,16 +74,18 @@ const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
                   className="absolute top-1/2 right-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
                 />
                 <input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="הכנס סיסמה"
                   required
-                  className="w-full pr-11 pl-11 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-blue-50 dark:bg-slate-700 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400 dark:focus:border-blue-400 transition-colors"
+                  className={`${inputBase} pr-11 pl-11`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'הסתר סיסמה' : 'הצג סיסמה'}
                   className="absolute top-1/2 left-4 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -90,7 +95,7 @@ const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
 
             {/* Error message */}
             {errorMessage && (
-              <p className="text-center text-sm font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl py-2 px-4">
+              <p role="alert" className="text-center text-sm font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl py-2 px-4">
                 {errorMessage}
               </p>
             )}
@@ -125,6 +130,6 @@ const LoginPage = ({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
       </div>
     </div>
   );
-};
+});
 
 export default LoginPage;
