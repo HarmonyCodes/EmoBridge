@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { User, Lock, LogIn, Eye, EyeOff, Sun, Moon } from 'lucide-react';
+import { User, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
+import DarkModeToggle from './DarkModeToggle';
 
 const LoginPage = React.memo(({ onLogin, errorMessage, isDarkMode, onToggleDarkMode }) => {
   const [username, setUsername] = useState('');
@@ -114,17 +115,7 @@ const LoginPage = React.memo(({ onLogin, errorMessage, isDarkMode, onToggleDarkM
 
         {/* Dark mode toggle */}
         <div className="flex justify-center mt-6">
-          <button
-            onClick={onToggleDarkMode}
-            className="bg-white/70 dark:bg-slate-800/70 px-6 py-3 rounded-2xl flex items-center gap-3 shadow border-2 border-blue-100 dark:border-blue-900/50 hover:border-blue-400 transition-all"
-          >
-            <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">
-              {isDarkMode ? 'מצב יום' : 'מצב לילה'}
-            </span>
-            {isDarkMode
-              ? <Sun className="text-yellow-400" size={20} />
-              : <Moon className="text-blue-400" size={20} />}
-          </button>
+          <DarkModeToggle isDarkMode={isDarkMode} onToggle={onToggleDarkMode} compact />
         </div>
 
       </div>

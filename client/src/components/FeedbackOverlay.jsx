@@ -27,7 +27,11 @@ const FeedbackOverlay = ({ message, isError, showConfetti }) => {
 
   return (
     <>
-      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none px-4">
+      <div
+        role="alert"
+        aria-live="assertive"
+        className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none px-4"
+      >
         <div
           className={`
             ${isError
@@ -38,8 +42,8 @@ const FeedbackOverlay = ({ message, isError, showConfetti }) => {
         >
           <span className="text-4xl font-black flex items-center gap-3 justify-center">
             {isError
-              ? <AlertCircle className="text-orange-500" />
-              : <Sparkles className="text-yellow-500" />}
+              ? <AlertCircle className="text-orange-500" aria-hidden="true" />
+              : <Sparkles className="text-yellow-500" aria-hidden="true" />}
             {message}
           </span>
         </div>
