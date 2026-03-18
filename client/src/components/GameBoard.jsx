@@ -34,12 +34,12 @@ const GameBoard = ({ isDarkMode, onToggleDarkMode }) => {
 
       {/* Emotion Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-2xl px-2" role="group" aria-label="בחירת רגש">
-        {roundEmotions.map((emotion) => (
+        {roundEmotions.map(({ id, emoji, name, color }) => (
           <EmotionCard
-            key={emotion.id}
-            emoji={emotion.emoji}
-            name={emotion.name}
-            color={emotion.color}
+            key={id}
+            emoji={emoji}
+            name={name}
+            color={color}
             onSelect={handleEmotionClick}
           />
         ))}
