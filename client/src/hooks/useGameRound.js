@@ -17,11 +17,12 @@ const pickRoundEmotions = () => {
   return [...distractors, target].sort(() => Math.random() - 0.5);
 };
 
+/** @typedef {'idle' | 'success' | 'error'} GameStatus */
+
 const useGameRound = () => {
   const [roundEmotions, setRoundEmotions] = useState(() => pickRoundEmotions());
   const [feedback, setFeedback] = useState(null);
-  const [isError, setIsError] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [gameStatus, setGameStatus] = useState(/** @type {GameStatus} */ ('idle'));
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -33,19 +34,16 @@ const useGameRound = () => {
   const handleEmotionClick = useCallback((emotionName) => {
     if (emotionName === TARGET_EMOTION) {
       setFeedback(pickRandom(successMessages));
-      setIsError(false);
-      setShowConfetti(true);
+      setGameStatus('success');
     } else {
       setFeedback(pickRandom(errorMessages));
-      setIsError(true);
-      setShowConfetti(false);
+      setGameStatus('error');
     }
 
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       setFeedback(null);
-      setShowConfetti(false);
-      setIsError(false);
+      setGameStatus('idle');
       setRoundEmotions(pickRoundEmotions());
       timerRef.current = null;
     }, 2500);
@@ -55,12 +53,11 @@ const useGameRound = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
     setFeedback(null);
-    setShowConfetti(false);
-    setIsError(false);
+    setGameStatus('idle');
     setRoundEmotions(pickRoundEmotions());
   }, []);
 
-  return { roundEmotions, feedback, isError, showConfetti, handleEmotionClick, resetGame };
+  return { roundEmotions, feedback, gameStatus, handleEmotionClick, resetGame };
 };
 
 export default useGameRound;

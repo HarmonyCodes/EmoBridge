@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, User } from 'lucide-react';
 
 import EmotionCard from './EmotionCard';
@@ -7,7 +7,18 @@ import DarkModeToggle from './DarkModeToggle';
 import useGameRound from '../hooks/useGameRound';
 
 const GameBoard = ({ isDarkMode, onToggleDarkMode }) => {
-  const { roundEmotions, feedback, isError, showConfetti, handleEmotionClick } = useGameRound();
+  const { roundEmotions, feedback, gameStatus, handleEmotionClick } = useGameRound();
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    if (gameStatus === 'success') {
+      setShowConfetti(true);
+    } else {
+      setShowConfetti(false);
+    }
+  }, [gameStatus]);
+
+  const isError = gameStatus === 'error';
 
   return (
     <main aria-label="לוח המשחק" className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
