@@ -9,7 +9,7 @@ const EmotionCard = React.memo(({ emoji, name, color, onSelect }) => (
     <span className="text-5xl md:text-6xl group-hover:scale-110 transition-transform duration-200" aria-hidden="true">
       {emoji}
     </span>
-    <span className="text-lg md:text-xl font-black text-slate-800">
+    <span className="text-lg md:text-xl font-black text-slate-800 dark:text-slate-100">
       {name}
     </span>
   </button>

@@ -96,7 +96,7 @@ const LoginPage = React.memo(({ onLogin, errorMessage, isDarkMode, onToggleDarkM
 
             {/* Error message */}
             {errorMessage && (
-              <p role="alert" className="text-center text-sm font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl py-2 px-4">
+              <p role="alert" className="text-center text-sm font-bold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl py-2 px-4">
                 {errorMessage}
               </p>
             )}
@@ -104,9 +104,10 @@ const LoginPage = React.memo(({ onLogin, errorMessage, isDarkMode, onToggleDarkM
             {/* Submit */}
             <button
               type="submit"
-              className="mt-2 w-full bg-blue-500 hover:bg-blue-600 active:translate-y-1 border-b-4 border-blue-700 active:border-b-0 text-white font-black text-lg py-3 rounded-2xl shadow-lg flex items-center justify-center gap-3 transition-all"
+              aria-label="כניסה למערכת"
+              className="mt-2 w-full bg-blue-600 hover:bg-blue-700 active:translate-y-1 border-b-4 border-blue-800 active:border-b-0 text-white font-black text-lg py-3 rounded-2xl shadow-lg flex items-center justify-center gap-3 transition-all"
             >
-              <LogIn size={22} />
+              <LogIn size={22} aria-hidden="true" />
               כניסה
             </button>
 

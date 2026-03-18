@@ -10,11 +10,15 @@ const GameBoard = ({ isDarkMode, onToggleDarkMode }) => {
   const { roundEmotions, feedback, isError, showConfetti, handleEmotionClick } = useGameRound();
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
+    <main aria-label="לוח המשחק" className="max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
 
       {/* Visual Target Area */}
       <div className="relative mb-12">
-        <div className="w-64 h-64 md:w-80 md:h-80 bg-white dark:bg-slate-800 rounded-[3rem] shadow-2xl border-8 border-white dark:border-slate-700 flex items-center justify-center overflow-hidden transition-transform hover:scale-105">
+        <div
+          role="img"
+          aria-label="דמות המראה רגש - כיצד אני מרגיש?"
+          className="w-64 h-64 md:w-80 md:h-80 bg-white dark:bg-slate-800 rounded-[3rem] shadow-2xl border-8 border-white dark:border-slate-700 flex items-center justify-center overflow-hidden transition-transform hover:scale-105"
+        >
           <div className="flex flex-col items-center">
             <User size={140} className="text-blue-100 dark:text-slate-600" aria-hidden="true" />
             <p className="mt-4 text-slate-500 dark:text-white text-xl font-bold">כיצד אני מרגיש?</p>

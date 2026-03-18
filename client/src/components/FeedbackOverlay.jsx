@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, AlertCircle } from 'lucide-react';
 
 const Confetti = () => (
-  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+  <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
     {[...Array(20)].map((_, i) => (
       <div
         key={i}
@@ -35,8 +35,8 @@ const FeedbackOverlay = ({ message, isError, showConfetti }) => {
         <div
           className={`
             ${isError
-              ? 'bg-orange-100 border-orange-400 text-orange-700'
-              : 'bg-green-100 border-green-400 text-green-700'}
+              ? 'bg-orange-100 border-orange-400 text-orange-700 dark:bg-orange-900 dark:border-orange-700 dark:text-orange-200'
+              : 'bg-green-100 border-green-400 text-green-700 dark:bg-green-900 dark:border-green-700 dark:text-green-200'}
             px-10 py-5 rounded-3xl shadow-2xl border-4 animate-bounce text-center
           `}
         >
