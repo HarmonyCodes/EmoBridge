@@ -21,7 +21,7 @@ async def get_random_question(current_user: models.User = Depends(get_current_us
     try:
         return await services.game_service.get_random_question(db)
     except ValueError as exc:
-        # turn into 404 if no images
+        # היעדר תמונות במסד הוא 404, לא שגיאת שרת
         raise HTTPException(status_code=404, detail=str(exc))
 
 
@@ -31,8 +31,8 @@ async def submit_trial(trial_in: schemas.GameTrialCreate, current_user: models.U
 
 
 @router.post("/end_session", response_model=schemas.LearningSessionRead)
-async def end_session(session_id: int, db: AsyncSession = Depends(get_session)):
-    session = await services.game_service.end_session(db, session_id)
+async def end_session(session_id: int, current_user: models.User = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
+    session = await services.game_service.end_session(db, session_id, current_user.id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     return session

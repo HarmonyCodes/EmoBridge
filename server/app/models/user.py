@@ -1,7 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.core.time_utils import utc_now
 from app.models.base import Base
 
 
@@ -11,8 +12,10 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(200), unique=True, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     hashed_password: Mapped[str] = mapped_column(String(200), nullable=False)
+    # הרשאת ניהול: מאפשרת צפייה בנתוני אנליטיקס של משתמשים אחרים
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     sessions = relationship("LearningSession", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
@@ -22,8 +25,8 @@ class LearningSession(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    ended_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    ended_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     user = relationship("User", back_populates="sessions", lazy="selectin")
     progresses = relationship("GameTrial", back_populates="session", lazy="selectin", cascade="all, delete-orphan")
 

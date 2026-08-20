@@ -6,7 +6,11 @@ from app import models, schemas
 
 
 async def create_emotion(db: AsyncSession, emotion_in: schemas.EmotionCreate) -> models.Emotion:
-    emotion = models.Emotion(name=emotion_in.name, emoji=emotion_in.emoji)
+    emotion = models.Emotion(
+        name=emotion_in.name,
+        emoji=emotion_in.emoji,
+        color=emotion_in.color,
+    )
     db.add(emotion)
     await db.commit()
     await db.refresh(emotion)

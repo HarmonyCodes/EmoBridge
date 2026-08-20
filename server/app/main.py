@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import engine
-from app.routers import user_router, emotion_router, game_router, auth_router
+from app.routers import user_router, emotion_router, game_router, auth_router, analytics_router
 from app import models
 
 def create_app() -> FastAPI:
@@ -27,6 +27,7 @@ def create_app() -> FastAPI:
     app.include_router(emotion_router.router)
     app.include_router(game_router.router)
     app.include_router(auth_router.router)
+    app.include_router(analytics_router.router)
 
     @app.on_event("startup")
     async def on_startup() -> None:

@@ -11,3 +11,4 @@ class Emotion(Base):
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     emoji: Mapped[str] = mapped_column(String(10), nullable=False)
     images: Mapped[list["Image"]] = relationship("Image", back_populates="emotion")  # Comma-separated image URLs
+    color: Mapped[str] = mapped_column(String(10), nullable=False)
