@@ -1,10 +1,10 @@
-from datetime import datetime
 from typing import List, Optional
 import random
 from fastapi import HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, schemas
+from app.core.time_utils import utc_now
 
 
 async def start_session(db: AsyncSession, user_id: int) -> models.LearningSession:
@@ -16,19 +16,18 @@ async def start_session(db: AsyncSession, user_id: int) -> models.LearningSessio
 
 
 async def get_random_question(db: AsyncSession) -> schemas.QuestionResponse:
-    # pick a random image
-    # note: ordering by random() is generic; DB-specific behavior assumed
+    # בחירת תמונה אקראית; order_by(random()) תלוי במימוש ה-DB
     result = await db.execute(select(models.Image).order_by(func.random()).limit(1))
     image = result.scalar_one_or_none()
     if not image:
         raise ValueError("No images available")
 
-    # load correct emotion
+    # טעינת הרגש הנכון המשויך לתמונה
     correct = await db.get(models.Emotion, image.emotion_id)
     if not correct:
         raise ValueError("Image has no associated emotion")
 
-    # pick 3 distractor emotions
+    # בחירת שלושה רגשות מטעים
     distractor_stmt = (
         select(models.Emotion)
         .where(models.Emotion.id != correct.id)
@@ -75,11 +74,15 @@ async def submit_trial(
     return trial
 
 
-async def end_session(db: AsyncSession, session_id: int) -> Optional[models.LearningSession]:
+async def end_session(
+    db: AsyncSession, session_id: int, current_user_id: int
+) -> Optional[models.LearningSession]:
     session = await db.get(models.LearningSession, session_id)
     if not session:
         return None
-    session.ended_at = datetime.utcnow()
+    if session.user_id != current_user_id:
+        raise HTTPException(status_code = 403, detail = "Session does not belong to user")
+    session.ended_at = utc_now()
     db.add(session)
     await db.commit()
     await db.refresh(session)

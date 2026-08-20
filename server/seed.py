@@ -6,10 +6,9 @@
 
 import asyncio
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-from sqlalchemy import text
-
+from app.core.time_utils import utc_now
 from app.db import async_session, engine
 from app.models import Base, Emotion, GameTrial, Image, LearningSession, User
 from app.services.auth_service import get_password_hash
@@ -32,13 +31,14 @@ EMOTIONS_DATA = [
 
 # ---------------------------------------------------------------------------
 # נתוני משתמשים: שמות ישראליים, מיילים, סיסמה זהה לכולם לצורכי בדיקה
+# המשתמש הראשון הוא אדמין, כדי לאפשר בדיקת אנליטיקס חוצת-משתמשים
 # ---------------------------------------------------------------------------
 USERS_DATA = [
-    {"username": "אבי כהן",    "email": "avi.cohen@example.com"},
-    {"username": "שירה לוי",   "email": "shira.levi@example.com"},
-    {"username": "מיכאל ברק",  "email": "michael.barak@example.com"},
-    {"username": "נועה פרידמן","email": "noa.friedman@example.com"},
-    {"username": "יונתן שפירא","email": "yonatan.shapira@example.com"},
+    {"username": "אבי כהן",    "email": "avi.cohen@example.com",      "is_admin": True},
+    {"username": "שירה לוי",   "email": "shira.levi@example.com",     "is_admin": False},
+    {"username": "מיכאל ברק",  "email": "michael.barak@example.com",  "is_admin": False},
+    {"username": "נועה פרידמן","email": "noa.friedman@example.com",   "is_admin": False},
+    {"username": "יונתן שפירא","email": "yonatan.shapira@example.com","is_admin": False},
 ]
 
 DEFAULT_PASSWORD = "Password123!"
@@ -55,16 +55,6 @@ CORRECT_RATE_STEP = 0.15       # שיפור באחוז ההצלחה בין סש�
 
 SCORE_CORRECT = 10
 SCORE_WRONG = 0
-
-
-async def clear_existing_data(session) -> None:
-    """מחיקת כל הנתונים הקיימים לפני זריעה מחודשת.
-    אין צורך ב-commit — הטרנזקציה מנוהלת על-ידי session.begin() ב-main."""
-    await session.execute(text("DELETE FROM game_trials"))
-    await session.execute(text("DELETE FROM learning_sessions"))
-    await session.execute(text("DELETE FROM images"))
-    await session.execute(text("DELETE FROM users"))
-    await session.execute(text("DELETE FROM emotions"))
 
 
 async def seed_emotions(session) -> list[Emotion]:
@@ -124,12 +114,13 @@ async def seed_users_with_sessions(
             username=user_data["username"],
             email=user_data["email"],
             hashed_password=hashed_pw,
-            created_at=datetime.utcnow() - timedelta(days=30),
+            is_admin=user_data["is_admin"],
+            created_at=utc_now() - timedelta(days=30),
         )
         session.add(user)
         await session.flush()
 
-        session_start = datetime.utcnow() - timedelta(days=SESSIONS_PER_USER * 7)
+        session_start = utc_now() - timedelta(days=SESSIONS_PER_USER * 7)
 
         for session_idx in range(SESSIONS_PER_USER):
             # כל סשן מאוחר יותר → שיפור בביצועים
@@ -181,8 +172,9 @@ async def seed_users_with_sessions(
                 )
                 session.add(trial)
 
+        role_label = " [אדמין]" if user_data["is_admin"] else ""
         print(
-            f"  נוצר משתמש '{user.username}' עם {SESSIONS_PER_USER} סשנים "
+            f"  נוצר משתמש '{user.username}'{role_label} עם {SESSIONS_PER_USER} סשנים "
             f"× {TRIALS_PER_SESSION} ניסיונות."
         )
 
@@ -199,9 +191,7 @@ async def main() -> None:
 
     async with async_session() as session:
         async with session.begin():
-            print("DB נקי — מדלג על מחיקה ידנית.")
-            # לאחר drop_all + create_all הטבלאות ריקות; אין צורך ב-DELETE
-
+            # לאחר drop_all + create_all הטבלאות ריקות; אין צורך במחיקה ידנית
             print("זורע רגשות...")
             emotions = await seed_emotions(session)
 
@@ -220,6 +210,8 @@ async def main() -> None:
             f"  ניסיונות (מקסימום): "
             f"{len(USERS_DATA) * SESSIONS_PER_USER * TRIALS_PER_SESSION}"
         )
+        admin_names = [u["username"] for u in USERS_DATA if u["is_admin"]]
+        print(f"  אדמינים: {', '.join(admin_names)}")
         print(f"\n  סיסמה לכל המשתמשים: {DEFAULT_PASSWORD}")
 
 

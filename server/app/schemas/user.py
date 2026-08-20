@@ -14,6 +14,7 @@ class UserRead(BaseModel):
     username: str
     email: Optional[str] = None
     created_at: Optional[datetime] = None
+    is_admin: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 
