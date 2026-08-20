@@ -4,6 +4,7 @@ from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, schemas
+from app.core.time_utils import ensure_utc, utc_now
 
 
 async def get_user_success_analytics(
@@ -16,8 +17,10 @@ async def get_user_success_analytics(
     מחשב מדדי הצלחה וזמן תגובה בטווח תאריכים מוגדר.
     ברירת מחדל: 30 הימים האחרונים.
     """
-    resolved_end_date = end_date or datetime.utcnow()
-    resolved_start_date = start_date or (resolved_end_date - timedelta(days=30))
+    resolved_end_date = ensure_utc(end_date) or utc_now()
+    resolved_start_date = ensure_utc(start_date) or (
+        resolved_end_date - timedelta(days=30)
+    )
 
     filters = [
         models.LearningSession.started_at >= resolved_start_date,
